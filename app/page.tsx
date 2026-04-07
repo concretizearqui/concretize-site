@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { 'use client' } from 'react';
 
 type Estado = 'GO' | 'DF' | 'MT';
 type Padrao = 'baixo' | 'medio' | 'alto';

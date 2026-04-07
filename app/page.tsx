@@ -1,19 +1,24 @@
 import { useState } from 'react';
+
+type Estado = 'GO' | 'DF' | 'MT';
+type Padrao = 'baixo' | 'medio' | 'alto';
+type Filtro = 'todos' | 'engenharia' | 'execucao' | 'documentacao';
+type TipoServico = Exclude<Filtro, 'todos'>;
 import { MessageCircle, Hammer, FileText, Building, ClipboardCheck } from 'lucide-react';
 
 export default function SiteConstrucaoReforma() {
   const [area, setArea] = useState('');
-  const [estado, setEstado] = useState('GO');
-  const [padrao, setPadrao] = useState('medio');
-  const [filtro, setFiltro] = useState('todos');
+  const [estado, setEstado] = useState<Estado>('GO');
+  const [padrao, setPadrao] = useState<Padrao>('medio');
+  const [filtro, setFiltro] = useState<Filtro>('todos');
 
-  const cubBase = {
+  const cubBase: Record<Estado, number> = {
     GO: 1920,
     DF: 2260,
     MT: 1950,
   };
 
-  const fatorPadrao = {
+  const fatorPadrao: Record<Padrao, number> = {
     baixo: 0.85,
     medio: 1,
     alto: 1.25,
@@ -24,7 +29,13 @@ export default function SiteConstrucaoReforma() {
   const valorMedio = metragem > 0 ? metragem * valorReferencia : 0;
   const valorFormatado = valorMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  const services = [
+  const services: Array<{
+    title: string;
+    tipo: TipoServico;
+    icon: typeof MessageCircle;
+    desc: string;
+    img: string;
+  }> = [
     { title: 'Laudos de Reforma', tipo: 'engenharia', icon: FileText, desc: 'Laudos técnicos para aprovação de reformas.', img: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0' },
     { title: 'Reforço Estrutural', tipo: 'engenharia', icon: Building, desc: 'Reforço e segurança estrutural.', img: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e' },
     { title: 'Reformas', tipo: 'execucao', icon: Hammer, desc: 'Reformas completas com acabamento.', img: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511' },
@@ -126,7 +137,7 @@ export default function SiteConstrucaoReforma() {
           <h2 className="text-3xl font-bold">Nossos Serviços</h2>
 
           <div className="mt-6 flex gap-3">
-            {['todos','engenharia','execucao','documentacao'].map((f) => (
+            {(['todos', 'engenharia', 'execucao', 'documentacao'] as Filtro[]).map((f) => (
               <button
                 key={f}
                 onClick={() => setFiltro(f)}
@@ -167,7 +178,7 @@ export default function SiteConstrucaoReforma() {
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-slate-700">Estado</label>
-            <select value={estado} onChange={(e) => setEstado(e.target.value)} className="p-3 rounded border">
+            <select value={estado} onChange={(e) => setEstado(e.target.value as Estado)} className="p-3 rounded border">
               <option>GO</option>
               <option>DF</option>
               <option>MT</option>
@@ -177,7 +188,7 @@ export default function SiteConstrucaoReforma() {
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-slate-700">Padrão da sua obra</label>
 
-            <select value={padrao} onChange={(e) => setPadrao(e.target.value)} className="p-3 rounded border">
+            <select value={padrao} onChange={(e) => setPadrao(e.target.value as Padrao)} className="p-3 rounded border">
               <option value="baixo">Baixo</option>
               <option value="medio">Médio</option>
               <option value="alto">Alto</option>

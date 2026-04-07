@@ -1,10 +1,12 @@
-import { 'use client' } from 'react';
+'use client';
+
+import { useState } from 'react';
+import { MessageCircle, Hammer, FileText, Building, ClipboardCheck } from 'lucide-react';
 
 type Estado = 'GO' | 'DF' | 'MT';
 type Padrao = 'baixo' | 'medio' | 'alto';
 type Filtro = 'todos' | 'engenharia' | 'execucao' | 'documentacao';
 type TipoServico = Exclude<Filtro, 'todos'>;
-import { MessageCircle, Hammer, FileText, Building, ClipboardCheck } from 'lucide-react';
 
 export default function SiteConstrucaoReforma() {
   const [area, setArea] = useState('');

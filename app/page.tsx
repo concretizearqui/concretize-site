@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 
 export default function ConcretizeSite() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [estado, setEstado] = useState('Goiás');
   const [cidade, setCidade] = useState('');
   const [padraoObra, setPadraoObra] = useState('Médio padrão');
@@ -123,13 +124,59 @@ export default function ConcretizeSite() {
             <a href="#orcamento" className="transition hover:text-emerald-300">Orçamento</a>
           </nav>
 
-          <a
-            href="#orcamento"
-            className="rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.32)] transition hover:bg-emerald-500"
-          >
-            Solicitar orçamento
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href="#orcamento"
+              className="hidden rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.32)] transition hover:bg-emerald-500 md:inline-flex"
+            >
+              Solicitar orçamento
+            </a>
+
+            <button
+              type="button"
+              aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white backdrop-blur transition hover:bg-white/10 md:hidden"
+            >
+              <span className="text-xl leading-none">{menuOpen ? '✕' : '☰'}</span>
+            </button>
+          </div>
         </div>
+      {menuOpen && (
+        <div className="border-t border-white/10 bg-slate-950/95 px-6 pb-6 pt-4 text-white backdrop-blur-xl md:hidden">
+          <div className="space-y-3 rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-[0_20px_50px_rgba(2,6,23,0.35)]">
+            <a
+              href="#servicos"
+              onClick={() => setMenuOpen(false)}
+              className="block rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm font-medium transition hover:bg-emerald-500/10 hover:text-emerald-300"
+            >
+              Serviços
+            </a>
+            <a
+              href="#sobre"
+              onClick={() => setMenuOpen(false)}
+              className="block rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm font-medium transition hover:bg-emerald-500/10 hover:text-emerald-300"
+            >
+              Sobre
+            </a>
+            <a
+              href="#valores"
+              onClick={() => setMenuOpen(false)}
+              className="block rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm font-medium transition hover:bg-emerald-500/10 hover:text-emerald-300"
+            >
+              Missão, Visão e Valores
+            </a>
+            <a
+              href="#orcamento"
+              onClick={() => setMenuOpen(false)}
+              className="block rounded-2xl border border-emerald-500/20 bg-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.25)] transition hover:bg-emerald-500"
+            >
+              Solicitar orçamento
+            </a>
+          </div>
+        </div>
+      )}
       </header>
 
       <section id="inicio" className="relative overflow-hidden bg-slate-950">
@@ -161,13 +208,13 @@ export default function ConcretizeSite() {
           <div className="absolute inset-y-0 right-0 hidden w-[34%] bg-gradient-to-l from-emerald-500/12 via-emerald-400/5 to-transparent lg:block" />
         </div>
 
-        <div className="relative mx-auto grid min-h-[88vh] max-w-7xl items-center gap-14 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="relative mx-auto grid min-h-[88vh] max-w-7xl items-center gap-14 px-6 py-14 sm:py-16 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="max-w-3xl">
             <span className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-1.5 text-sm text-white/90 backdrop-blur">
               Engenharia, gestão e regularização com padrão premium
             </span>
 
-            <h1 className="mt-7 text-4xl font-bold leading-tight text-white md:text-6xl">
+            <h1 className="mt-7 text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
               Projetos e obras com <span className="text-emerald-300">sofisticação</span>, técnica e previsibilidade.
             </h1>
 
@@ -176,22 +223,22 @@ export default function ConcretizeSite() {
               organização, acabamento de qualidade e acompanhamento profissional em cada etapa do projeto.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
               <a
                 href="#orcamento"
-                className="rounded-2xl bg-emerald-600 px-7 py-3.5 text-sm font-semibold text-white shadow-[0_20px_60px_rgba(5,150,105,0.34)] transition hover:bg-emerald-500"
+                className="inline-flex items-center justify-center rounded-2xl bg-emerald-600 px-7 py-3.5 text-sm font-semibold text-white shadow-[0_20px_60px_rgba(5,150,105,0.34)] transition hover:bg-emerald-500"
               >
                 Solicitar orçamento
               </a>
               <a
                 href="#servicos"
-                className="rounded-2xl border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 Conhecer serviços
               </a>
             </div>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            <div className="mt-12 grid gap-4 md:grid-cols-3">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
                 <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Atendimento</p>
                 <p className="mt-3 text-lg font-semibold text-white">Residencial, comercial e corporativo</p>
@@ -207,18 +254,18 @@ export default function ConcretizeSite() {
             </div>
           </div>
 
-          <div className="lg:justify-self-end">
+          <div className="mt-2 lg:justify-self-end">
             <div className="overflow-hidden rounded-[32px] border border-white/10 bg-white/10 p-3 shadow-[0_30px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl">
               <div className="overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/80">
                 <img
               src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80"
                   alt="Equipe em reunião técnica"
-                  className="h-[420px] w-full object-cover"
+                  className="h-[260px] w-full object-cover sm:h-[320px] lg:h-[420px]"
                 />
-                <div className="grid gap-4 p-6 md:grid-cols-2">
+                <div className="grid gap-4 p-5 sm:p-6 md:grid-cols-2">
                   <div>
                     <p className="text-sm uppercase tracking-[0.2em] text-emerald-300">Concretize Engenharia</p>
-                    <p className="mt-3 text-2xl font-semibold text-white">Responsabilidade técnica com apresentação de alto padrão.</p>
+                    <p className="mt-3 text-xl font-semibold text-white sm:text-2xl">Responsabilidade técnica com apresentação de alto padrão.</p>
                   </div>
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                     <p className="text-sm text-slate-400">Imagem de marca</p>
@@ -233,7 +280,7 @@ export default function ConcretizeSite() {
         </div>
       </section>
 
-      <section id="servicos" className="mx-auto max-w-7xl px-6 py-24">
+      <section id="servicos" className="mx-auto max-w-7xl px-6 py-20 sm:py-24">
         <div className="max-w-3xl">
           <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Serviços</span>
           <h2 className="mt-3 text-3xl font-bold text-slate-900 md:text-4xl">Soluções pensadas para cada etapa da sua obra</h2>
@@ -242,10 +289,10 @@ export default function ConcretizeSite() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:mt-14 md:grid-cols-3 md:gap-8">
           {services.map((service) => (
             <div key={service.title} className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-[0_25px_60px_rgba(15,23,42,0.12)]">
-              <img src={service.image} alt={service.title} className="h-56 w-full object-cover" />
+              <img src={service.image} alt={service.title} className="h-52 w-full object-cover sm:h-56" />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-slate-900">{service.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600">{service.description}</p>
@@ -255,7 +302,7 @@ export default function ConcretizeSite() {
         </div>
       </section>
 
-      <section id="sobre" className="bg-slate-50 py-24">
+      <section id="sobre" className="bg-slate-50 py-20 sm:py-24">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-2">
           <div>
             <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Sobre a empresa</span>
@@ -278,13 +325,13 @@ export default function ConcretizeSite() {
         </div>
       </section>
 
-      <section id="valores" className="mx-auto max-w-7xl px-6 py-24">
+      <section id="valores" className="mx-auto max-w-7xl px-6 py-20 sm:py-24">
         <div className="max-w-3xl">
           <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Essência da empresa</span>
           <h2 className="mt-3 text-3xl font-bold text-slate-900 md:text-4xl">Missão, visão e valores que sustentam cada entrega</h2>
         </div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-3 md:gap-8">
           {values.map((item) => (
             <div key={item.title} className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
               <h3 className="text-2xl font-semibold text-slate-900">{item.title}</h3>
@@ -294,8 +341,8 @@ export default function ConcretizeSite() {
         </div>
       </section>
 
-      <section id="orcamento" className="bg-[linear-gradient(135deg,#020617,#0f172a,#111827)] py-24 text-white">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 md:grid-cols-2">
+      <section id="orcamento" className="bg-[linear-gradient(135deg,#020617,#0f172a,#111827)] py-20 text-white sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-2 md:gap-12">
           <div>
             <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Orçamento</span>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">Solicite uma avaliação para o seu projeto</h2>
@@ -304,7 +351,7 @@ export default function ConcretizeSite() {
             </p>
           </div>
 
-          <form className="rounded-[32px] bg-white p-8 text-slate-900 shadow-[0_30px_90px_rgba(2,6,23,0.35)]">
+          <form className="rounded-[32px] bg-white p-6 text-slate-900 shadow-[0_30px_90px_rgba(2,6,23,0.35)] sm:p-8">
             <div className="grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium">Nome completo</label>
@@ -367,8 +414,8 @@ export default function ConcretizeSite() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3 md:grid-cols-2">
-              <button type="button" className="w-full rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-2">
+              <button type="button" className="min-h-[52px] w-full rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
                 Enviar solicitação
               </button>
 
@@ -376,7 +423,7 @@ export default function ConcretizeSite() {
                 href={linkWhatsAppSimulacao}
                 target="_blank"
                 rel="noreferrer"
-                className="flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.3)] transition hover:bg-emerald-500"
+                className="flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.3)] transition hover:bg-emerald-500"
               >
                 Enviar simulação no WhatsApp
               </a>
@@ -385,7 +432,7 @@ export default function ConcretizeSite() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-slate-950">
+      <footer className="relative border-t border-white/10 bg-slate-950">
         <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
           <img src="/logo-transparent.png" alt="marca d'água" className="h-40 w-auto" />
         </div>
@@ -403,6 +450,16 @@ export default function ConcretizeSite() {
           <p>© {new Date().getFullYear()} Concretize Engenharia. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      <a
+        href={linkWhatsAppSimulacao}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Falar no WhatsApp"
+        className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_rgba(5,150,105,0.35)] transition hover:bg-emerald-500 md:hidden"
+      >
+        WhatsApp
+      </a>
 
       <style jsx>{`
         @keyframes floatLogo {

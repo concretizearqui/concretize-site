@@ -1,247 +1,419 @@
 'use client';
-// teste
-import { useState } from 'react';
-import { MessageCircle, Hammer, FileText, Building, ClipboardCheck } from 'lucide-react';
 
-type Estado = 'GO' | 'DF' | 'MT';
-type Padrao = 'baixo' | 'medio' | 'alto';
-type Filtro = 'todos' | 'engenharia' | 'execucao' | 'documentacao';
-type TipoServico = Exclude<Filtro, 'todos'>;
+import { useMemo, useState } from 'react';
 
-export default function SiteConstrucaoReforma() {
-  const [area, setArea] = useState('');
-  const [estado, setEstado] = useState<Estado>('GO');
-  const [padrao, setPadrao] = useState<Padrao>('medio');
-  const [filtro, setFiltro] = useState<Filtro>('todos');
+export default function ConcretizeSite() {
+  const [estado, setEstado] = useState('Goiás');
+  const [cidade, setCidade] = useState('');
+  const [padraoObra, setPadraoObra] = useState('Médio padrão');
+  const [metragem, setMetragem] = useState('');
+  const [nome, setNome] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
+  const [descricao, setDescricao] = useState('');
 
-  const cubBase: Record<Estado, number> = {
-    GO: 1920,
-    DF: 2260,
-    MT: 1950,
-  };
-
-  const fatorPadrao: Record<Padrao, number> = {
-    baixo: 0.85,
-    medio: 1,
-    alto: 1.25,
-  };
-
-  const metragem = Number(area);
-  const valorReferencia = cubBase[estado] * fatorPadrao[padrao];
-  const valorMedio = metragem > 0 ? metragem * valorReferencia : 0;
-  const valorFormatado = valorMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  const services: Array<{
-    title: string;
-    tipo: TipoServico;
-    icon: typeof MessageCircle;
-    desc: string;
-    img: string;
-  }> = [
-    { title: 'Laudos de Reforma', tipo: 'engenharia', icon: FileText, desc: 'Laudos técnicos para aprovação de reformas.', img: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0' },
-    { title: 'Reforço Estrutural', tipo: 'engenharia', icon: Building, desc: 'Reforço e segurança estrutural.', img: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e' },
-    { title: 'Reformas', tipo: 'execucao', icon: Hammer, desc: 'Reformas completas com acabamento.', img: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511' },
-    { title: 'Construção', tipo: 'execucao', icon: Hammer, desc: 'Construção do zero com qualidade.', img: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e' },
-    { title: 'ART', tipo: 'documentacao', icon: ClipboardCheck, desc: 'Regularização técnica da obra.', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800' },
-    { title: 'Projetos', tipo: 'engenharia', icon: FileText, desc: 'Projetos completos de engenharia.', img: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e' },
-    { title: 'Acompanhamento', tipo: 'engenharia', icon: ClipboardCheck, desc: 'Supervisão técnica da obra.', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c' },
-    { title: 'Gestão de Obras', tipo: 'engenharia', icon: Building, desc: 'Gestão completa da obra.', img: 'https://images.unsplash.com/photo-1507209696998-3c532be9b2b5?w=800' },
-    { title: 'Financiamento', tipo: 'documentacao', icon: FileText, desc: 'Documentação para financiamento.', img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa' },
+  const services = [
+    {
+      title: 'ART e Regularização',
+      description:
+        'Emissão de ART, suporte documental e acompanhamento técnico para garantir conformidade, segurança e respaldo legal em cada etapa do projeto.',
+      image:
+        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80',
+    },
+    {
+      title: 'Gestão de Obras',
+      description:
+        'Planejamento, acompanhamento físico da obra, controle de cronograma, qualidade e apoio técnico para execução com eficiência e previsibilidade.',
+      image:
+        'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1200&q=80',
+    },
+    {
+      title: 'Projetos e Consultoria',
+      description:
+        'Soluções sob medida para obras residenciais, comerciais e corporativas, com foco em organização, viabilidade e resultado.',
+      image:
+        'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
+    },
   ];
 
-  const servicesFiltrados = filtro === 'todos' ? services : services.filter(s => s.tipo === filtro);
+  const values = [
+    {
+      title: 'Missão',
+      text: 'Entregar soluções em engenharia com responsabilidade técnica, organização e excelência na execução.',
+    },
+    {
+      title: 'Visão',
+      text: 'Ser referência em serviços de engenharia, gestão de obras e regularização técnica, com confiança e credibilidade no mercado.',
+    },
+    {
+      title: 'Valores',
+      text: 'Compromisso, transparência, segurança, qualidade, respeito ao cliente e responsabilidade em cada entrega.',
+    },
+  ];
+
+  const cubPorEstado: Record<string, number> = {
+    Goiás: 1920,
+    'Distrito Federal': 2260,
+    'Mato Grosso': 1950,
+    Outro: 2000,
+  };
+
+  const fatorPorPadrao: Record<string, number> = {
+    'Padrão econômico': 0.9,
+    'Médio padrão': 1,
+    'Alto padrão': 1.25,
+    Comercial: 1.15,
+  };
+
+  const metragemNumerica = useMemo(() => {
+    const valor = String(metragem).replace(',', '.').replace(/[^\d.]/g, '');
+    return Number(valor);
+  }, [metragem]);
+
+  const valorEstimado = useMemo(() => {
+    const cub = cubPorEstado[estado] || 0;
+    const fator = fatorPorPadrao[padraoObra] || 1;
+    return metragemNumerica > 0 ? metragemNumerica * cub * fator : 0;
+  }, [estado, padraoObra, metragemNumerica]);
+
+  const valorEstimadoFormatado = valorEstimado.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+
+  const mensagemWhatsApp = encodeURIComponent(
+    [
+      'Olá! Fiz uma simulação de orçamento no site da Concretize Engenharia e gostaria de mais detalhes.',
+      '',
+      `Nome: ${nome || 'Não informado'}`,
+      `Telefone: ${telefone || 'Não informado'}`,
+      `E-mail: ${email || 'Não informado'}`,
+      `Estado: ${estado}`,
+      `Cidade: ${cidade || 'Não informada'}`,
+      `Padrão da obra: ${padraoObra}`,
+      `Metragem total estimada: ${metragemNumerica > 0 ? `${metragemNumerica} m²` : 'Não informada'}`,
+      `Valor estimado inicial: ${metragemNumerica > 0 ? valorEstimadoFormatado : 'Não calculado'}`,
+      `Descrição: ${descricao || 'Não informada'}`,
+      '',
+      'Gostaria de receber um orçamento mais detalhado.',
+    ].join('\n')
+  );
+
+  const linkWhatsAppSimulacao = `https://wa.me/5561995052395?text=${mensagemWhatsApp}`;
 
   return (
     <div className="min-h-screen bg-white text-slate-800">
-
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <a href="#inicio" className="flex items-center gap-3">
             <img
-              src="data:image/jpeg;base64,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"
-              alt="Concretize"
-              className="h-14 w-auto object-contain"
+              src="/logo-transparent.png"
+              alt="Logo Concretize Engenharia"
+              className="h-12 w-auto object-contain brightness-110 drop-shadow-[0_8px_24px_rgba(0,0,0,0.38)]"
+              onError={(e) => {
+                e.currentTarget.src = 'https://dummyimage.com/300x100/0f172a/ffffff&text=CONCRETIZE';
+              }}
             />
-            
-          </div>
-
-          <a
-            href={`https://wa.me/5561995052395?text=${encodeURIComponent('Olá! Vi o site e quero fazer um orçamento. Tenho um projeto e gostaria de entender valores e prazos. Pode me atender?')}`}
-            className="bg-emerald-600 text-white px-5 py-2 rounded-xl flex items-center gap-2"
-          >
-            <MessageCircle className="w-4 h-4" /> Orçamento
           </a>
-        </div>
-      </header>
 
-      {/* BANNER */}
-      <section className="bg-gradient-to-r from-emerald-700 to-emerald-500 text-white py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <h1 className="text-4xl font-bold max-w-xl">
-            Engenharia completa para sua obra, do projeto à execução
-          </h1>
-          <p className="mt-4 max-w-lg">
-            Especialistas em construção, reformas e regularização. Segurança, qualidade e confiança em cada etapa.
-          </p>
+          <nav className="hidden gap-6 text-sm font-medium text-slate-200 md:flex">
+            <a href="#servicos" className="transition hover:text-emerald-300">Serviços</a>
+            <a href="#sobre" className="transition hover:text-emerald-300">Sobre</a>
+            <a href="#valores" className="transition hover:text-emerald-300">Missão, Visão e Valores</a>
+            <a href="#orcamento" className="transition hover:text-emerald-300">Orçamento</a>
+          </nav>
+
           <a
-            href={`https://wa.me/5561995052395?text=${encodeURIComponent('Olá! Vi o site e quero fazer um orçamento. Tenho um projeto e gostaria de entender valores e prazos. Pode me atender?')}`}
-            className="mt-6 inline-block bg-white text-emerald-700 px-6 py-3 rounded-xl font-semibold"
+            href="#orcamento"
+            className="rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.32)] transition hover:bg-emerald-500"
           >
             Solicitar orçamento
           </a>
         </div>
-      </section>
+      </header>
 
-            {/* SOBRE A EMPRESA */}
-      <section className="py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold">Sobre a Concretize</h2>
+      <section id="inicio" className="relative overflow-hidden bg-slate-950">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1800&q=80"
+            alt="Obra em andamento"
+            className="h-full w-full object-cover opacity-35"
+          />
 
-          <p className="mt-6 max-w-3xl text-slate-600 leading-7">
-            A Concretize Arq & Engenharia atua com soluções completas em engenharia, oferecendo desde a elaboração de projetos até a execução e gestão de obras. Nosso foco é entregar qualidade, segurança e eficiência, garantindo que cada cliente tenha sua obra realizada com excelência e dentro dos padrões técnicos exigidos.
-          </p>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.28),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.14),transparent_24%),linear-gradient(135deg,rgba(2,6,23,0.97),rgba(6,78,59,0.26),rgba(15,23,42,0.92),rgba(2,6,23,0.98))]" />
 
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {/* Marca d'água da logo (harmônica e central) */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: "url('/logo-transparent.png')",
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '620px',
+              backgroundPosition: 'center',
+              opacity: 0.14,
+              filter: 'drop-shadow(0 0 35px rgba(16,185,129,0.16)) saturate(115%)',
+              animation: 'floatLogo 10s ease-in-out infinite',
+            }}
+          />
 
-            <div className="bg-white p-6 rounded-2xl shadow">
-              <h3 className="font-bold text-emerald-600 text-lg">Missão</h3>
-              <p className="mt-3 text-sm text-slate-600">
-                Entregar soluções completas em engenharia com qualidade, segurança e transparência, garantindo a satisfação dos nossos clientes em cada etapa da obra.
-              </p>
-            </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent" />
 
-            <div className="bg-white p-6 rounded-2xl shadow">
-              <h3 className="font-bold text-emerald-600 text-lg">Visão</h3>
-              <p className="mt-3 text-sm text-slate-600">
-                Ser referência em engenharia e construção, reconhecida pela excelência na execução, inovação e confiança no mercado.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl shadow">
-              <h3 className="font-bold text-emerald-600 text-lg">Valores</h3>
-              <ul className="mt-3 text-sm text-slate-600 space-y-2">
-                <li>• Compromisso com qualidade</li>
-                <li>• Transparência com o cliente</li>
-                <li>• Responsabilidade técnica</li>
-                <li>• Segurança em todas as etapas</li>
-                <li>• Respeito a prazos</li>
-              </ul>
-            </div>
-
-          </div>
+          <div className="absolute inset-y-0 right-0 hidden w-[34%] bg-gradient-to-l from-emerald-500/12 via-emerald-400/5 to-transparent lg:block" />
         </div>
-      </section>
 
-      {/* SERVIÇOS */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold">Nossos Serviços</h2>
+        <div className="relative mx-auto grid min-h-[88vh] max-w-7xl items-center gap-14 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="max-w-3xl">
+            <span className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-1.5 text-sm text-white/90 backdrop-blur">
+              Engenharia, gestão e regularização com padrão premium
+            </span>
 
-          <div className="mt-6 flex gap-3">
-            {(['todos', 'engenharia', 'execucao', 'documentacao'] as Filtro[]).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFiltro(f)}
-                className={`px-4 py-2 rounded-full ${filtro === f ? 'bg-emerald-600 text-white' : 'bg-gray-200'}`}
+            <h1 className="mt-7 text-4xl font-bold leading-tight text-white md:text-6xl">
+              Projetos e obras com <span className="text-emerald-300">sofisticação</span>, técnica e previsibilidade.
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+              A Concretize entrega soluções completas em engenharia para clientes que buscam segurança,
+              organização, acabamento de qualidade e acompanhamento profissional em cada etapa do projeto.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-4">
+              <a
+                href="#orcamento"
+                className="rounded-2xl bg-emerald-600 px-7 py-3.5 text-sm font-semibold text-white shadow-[0_20px_60px_rgba(5,150,105,0.34)] transition hover:bg-emerald-500"
               >
-                {f}
-              </button>
-            ))}
+                Solicitar orçamento
+              </a>
+              <a
+                href="#servicos"
+                className="rounded-2xl border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
+              >
+                Conhecer serviços
+              </a>
+            </div>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+                <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Atendimento</p>
+                <p className="mt-3 text-lg font-semibold text-white">Residencial, comercial e corporativo</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+                <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Entrega</p>
+                <p className="mt-3 text-lg font-semibold text-white">Mais controle, clareza e segurança técnica</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+                <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Posicionamento</p>
+                <p className="mt-3 text-lg font-semibold text-white">Visual premium e execução com confiança</p>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {servicesFiltrados.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.title} className="bg-white rounded-2xl shadow hover:shadow-xl transition transform hover:-translate-y-2">
-                  <img src={item.img} alt={item.title} className="h-48 w-full object-cover" onError={(e)=>{e.currentTarget.src='https://via.placeholder.com/400x300?text=Imagem';}} />
-                  <div className="p-5">
-                    <div className="flex items-center gap-2">
-                      <Icon className="text-emerald-600" />
-                      <h3 className="font-bold">{item.title}</h3>
-                    </div>
-                    <p className="text-sm mt-2">{item.desc}</p>
+          <div className="lg:justify-self-end">
+            <div className="overflow-hidden rounded-[32px] border border-white/10 bg-white/10 p-3 shadow-[0_30px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl">
+              <div className="overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/80">
+                <img
+              src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80"
+                  alt="Equipe em reunião técnica"
+                  className="h-[420px] w-full object-cover"
+                />
+                <div className="grid gap-4 p-6 md:grid-cols-2">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.2em] text-emerald-300">Concretize Engenharia</p>
+                    <p className="mt-3 text-2xl font-semibold text-white">Responsabilidade técnica com apresentação de alto padrão.</p>
+                  </div>
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                    <p className="text-sm text-slate-400">Imagem de marca</p>
+                    <p className="mt-2 text-base leading-7 text-slate-200">
+                      Um banner mais sofisticado, com logo aplicada de forma elegante, transmite autoridade e reforça a percepção de valor da empresa.
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ORÇAMENTO */}
-      <section className="py-20 bg-slate-100">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold">Simulação de investimento da obra</h2>
-          <p className="mt-3 text-slate-600">Preencha as informações abaixo para obter uma estimativa inicial de investimento com base no CUB atualizado.</p>
+      <section id="servicos" className="mx-auto max-w-7xl px-6 py-24">
+        <div className="max-w-3xl">
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Serviços</span>
+          <h2 className="mt-3 text-3xl font-bold text-slate-900 md:text-4xl">Soluções pensadas para cada etapa da sua obra</h2>
+          <p className="mt-4 text-base leading-7 text-slate-600">
+            Trabalhamos com serviços técnicos e estratégicos para garantir segurança, regularidade e melhor desempenho na execução do seu projeto.
+          </p>
+        </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-700">Estado</label>
-            <select value={estado} onChange={(e) => setEstado(e.target.value as Estado)} className="p-3 rounded border">
-              <option>GO</option>
-              <option>DF</option>
-              <option>MT</option>
-            </select>
+        <div className="mt-14 grid gap-8 md:grid-cols-3">
+          {services.map((service) => (
+            <div key={service.title} className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-[0_25px_60px_rgba(15,23,42,0.12)]">
+              <img src={service.image} alt={service.title} className="h-56 w-full object-cover" />
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-slate-900">{service.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{service.description}</p>
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-700">Padrão da sua obra</label>
-
-            <select value={padrao} onChange={(e) => setPadrao(e.target.value as Padrao)} className="p-3 rounded border">
-              <option value="baixo">Baixo</option>
-              <option value="medio">Médio</option>
-              <option value="alto">Alto</option>
-            </select>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-700">Metragem total estimada (m²)</label>
-
-            <input value={area} onChange={(e) => setArea(e.target.value)} placeholder="m²" className="p-3 border rounded" />
-            </div>
+      <section id="sobre" className="bg-slate-50 py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-2">
+          <div>
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Sobre a empresa</span>
+            <h2 className="mt-3 text-3xl font-bold text-slate-900 md:text-4xl">Compromisso técnico com cada detalhe do projeto</h2>
+            <p className="mt-6 text-base leading-8 text-slate-600">
+              A Concretize Engenharia atua com foco em soluções técnicas, gestão eficiente e acompanhamento de obras, entregando mais organização, segurança e confiança para seus clientes.
+            </p>
+            <p className="mt-4 text-base leading-8 text-slate-600">
+              Nosso trabalho une conhecimento técnico, atenção aos detalhes e atendimento próximo, sempre buscando viabilidade, conformidade e excelência em cada entrega.
+            </p>
           </div>
 
-          <div className="mt-8 bg-emerald-600 text-white p-6 rounded-2xl">
-            <h3 className="text-2xl font-bold">{metragem > 0 ? valorFormatado : 'Informe a metragem'}</h3>
+          <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-slate-200">
+            <img
+              src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80"
+              alt="Equipe em reunião técnica"
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </section>
 
-            {/* CONTATO */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold">Fale com a gente</h2>
-          <p className="mt-4 text-slate-600">Entre em contato pelo WhatsApp ou envie um e-mail.</p>
+      <section id="valores" className="mx-auto max-w-7xl px-6 py-24">
+        <div className="max-w-3xl">
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Essência da empresa</span>
+          <h2 className="mt-3 text-3xl font-bold text-slate-900 md:text-4xl">Missão, visão e valores que sustentam cada entrega</h2>
+        </div>
 
-          <div className="mt-6 flex flex-col items-center gap-4">
-            <a
-              href={`https://wa.me/5561995052395?text=${encodeURIComponent('Olá! Vi o site e quero fazer um orçamento. Tenho um projeto e gostaria de entender valores e prazos. Pode me atender?')}`}
-              className="bg-emerald-600 text-white px-6 py-3 rounded-xl flex items-center gap-2"
-            >
-              <MessageCircle /> Falar no WhatsApp
-            </a>
-
-            <a
-              href="mailto:Concretizearqui@gmail.com"
-              className="text-emerald-700 font-semibold underline"
-            >
-              Concretizearqui@gmail.com
-            </a>
-          </div>
+        <div className="mt-12 grid gap-8 md:grid-cols-3">
+          {values.map((item) => (
+            <div key={item.title} className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+              <h3 className="text-2xl font-semibold text-slate-900">{item.title}</h3>
+              <p className="mt-4 text-base leading-8 text-slate-600">{item.text}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* WHATSAPP FLOAT */}
-      <a
-        href={`https://wa.me/5561995052395?text=${encodeURIComponent('Olá! Vi o site e quero fazer um orçamento. Tenho um projeto e gostaria de entender valores e prazos. Pode me atender?')}`}
-        className="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-full flex gap-2 animate-pulse"
-      >
-        <MessageCircle /> WhatsApp
-      </a>
+      <section id="orcamento" className="bg-[linear-gradient(135deg,#020617,#0f172a,#111827)] py-24 text-white">
+        <div className="mx-auto grid max-w-7xl gap-12 px-6 md:grid-cols-2">
+          <div>
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Orçamento</span>
+            <h2 className="mt-3 text-3xl font-bold md:text-4xl">Solicite uma avaliação para o seu projeto</h2>
+            <p className="mt-6 max-w-xl text-base leading-8 text-slate-300">
+              Preencha as informações abaixo para receber um contato com mais agilidade. Quanto mais detalhes, melhor será a análise inicial do seu atendimento.
+            </p>
+          </div>
 
+          <form className="rounded-[32px] bg-white p-8 text-slate-900 shadow-[0_30px_90px_rgba(2,6,23,0.35)]">
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-medium">Nome completo</label>
+                <input value={nome} onChange={(e) => setNome(e.target.value)} type="text" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900" placeholder="Digite seu nome" />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Telefone</label>
+                <input value={telefone} onChange={(e) => setTelefone(e.target.value)} type="text" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900" placeholder="(00) 00000-0000" />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">E-mail</label>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900" placeholder="seuemail@exemplo.com" />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Estado</label>
+                <select value={estado} onChange={(e) => setEstado(e.target.value)} className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900">
+                  <option>Goiás</option>
+                  <option>Distrito Federal</option>
+                  <option>Mato Grosso</option>
+                  <option>Outro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Cidade</label>
+                <input value={cidade} onChange={(e) => setCidade(e.target.value)} type="text" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900" placeholder="Informe a cidade" />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Padrão da sua obra</label>
+                <select value={padraoObra} onChange={(e) => setPadraoObra(e.target.value)} className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900">
+                  <option>Alto padrão</option>
+                  <option>Médio padrão</option>
+                  <option>Padrão econômico</option>
+                  <option>Comercial</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Metragem total estimada</label>
+                <input value={metragem} onChange={(e) => setMetragem(e.target.value)} type="text" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900" placeholder="Ex.: 250 m²" />
+              </div>
+
+              <div className="md:col-span-2 rounded-[28px] bg-slate-100 p-6 ring-1 ring-slate-200">
+                <p className="text-sm font-medium text-slate-500">Simulação inicial do orçamento</p>
+                <p className="mt-2 text-3xl font-bold text-slate-900">
+                  {metragemNumerica > 0 ? valorEstimadoFormatado : 'Preencha os campos para simular'}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Esta simulação é uma estimativa inicial com base no estado, padrão da obra e metragem informada. O valor final pode variar conforme escopo, acabamento e particularidades do projeto.
+                </p>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-medium">Descreva sua necessidade</label>
+                <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={5} className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-slate-900" placeholder="Conte um pouco sobre a obra, serviço desejado e objetivo do atendimento" />
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              <button type="button" className="w-full rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                Enviar solicitação
+              </button>
+
+              <a
+                href={linkWhatsAppSimulacao}
+                target="_blank"
+                rel="noreferrer"
+                className="flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_15px_40px_rgba(5,150,105,0.3)] transition hover:bg-emerald-500"
+              >
+                Enviar simulação no WhatsApp
+              </a>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 bg-slate-950">
+        <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
+          <img src="/logo-transparent.png" alt="marca d'água" className="h-40 w-auto" />
+        </div>
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo-transparent.png"
+              alt="Logo Concretize Engenharia"
+              className="h-10 w-auto object-contain brightness-110"
+              onError={(e) => {
+                e.currentTarget.src = 'https://dummyimage.com/300x100/0f172a/ffffff&text=CONCRETIZE';
+              }}
+            />
+          </div>
+          <p>© {new Date().getFullYear()} Concretize Engenharia. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+
+      <style jsx>{`
+        @keyframes floatLogo {
+          0%, 100% {
+            transform: translateY(0px) scale(1);
+          }
+          50% {
+            transform: translateY(-10px) scale(1.03);
+          }
+        }
+      `}</style>
     </div>
   );
 }
